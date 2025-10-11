@@ -1,9 +1,13 @@
 import React from 'react'
+import HeaderComponent from '../components/HeaderComponent'
 
 function HomePages() {
   return (
     <>
-    <h1>HomePages</h1>
+    <main>
+      
+      <h1>HomePages</h1>
+     </main>
     </>
     
   )

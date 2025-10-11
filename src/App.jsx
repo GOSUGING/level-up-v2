@@ -1,23 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { Route, Routes } from 'react-router'
-import HomePages from './pages/HomePages'  
-import Contactpages from './pages/ContactPages'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './App.css'
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { CartProvider } from './context/CartContext'; 
+import HeaderComponent from './components/HeaderComponent';
+import HomePages from './pages/HomePages';  
+import ProductsPages from './pages/ProductsPages';
+import RegisterPages from './pages/RegisterPages';
+import LoginPages from './pages/LoginPages';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+
 
 function App() {
-
   return (
-    <div className="App">
-      <Routes>
-        <Route path='/' element={<HomePages />}/>
-        <Route path='/contact' element={<Contactpages />}/>
-      </Routes>
-    </div>
-    
+    <CartProvider>
+      <BrowserRouter>
+        <HeaderComponent />
+        <div className="App">
+          <Routes>
+            <Route path='/' element={<HomePages />} />
+            <Route path='/productos' element={<ProductsPages />} />
+            <Route path='/registro' element={<RegisterPages />} />
+            <Route path='/login' element={<LoginPages />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </CartProvider>
   )
 }
 
-export default App
+export default App;
