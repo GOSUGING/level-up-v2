@@ -8,6 +8,7 @@ import RegisterPages from './pages/RegisterPages';
 import LoginPages from './pages/LoginPages';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import Footer from './components/Footer';
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path='/login' element={<LoginPages />} />
           </Routes>
         </div>
+        <Footer />
       </BrowserRouter>
     </CartProvider>
   )

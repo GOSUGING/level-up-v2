@@ -188,3 +188,27 @@ footer {
     object-fit: cover;
     border-radius: 10px;
 }
+
+/* Contenedor de sección centrado */
+.row.mt-4 {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+}
+
+/* Ajuste de columna para que no ocupe todo el ancho */
+.row.mt-4 .col-md-8 {
+    max-width: 800px; /* Ajusta según necesites */
+    margin: 0 auto; /* Centra la columna */
+}
+
+/* Carrusel de blogs */
+.carousel {
+    margin: 0 auto;
+}
+
+/* Google Map container */
+#google-map-container {
+    margin: 0 auto;
+    max-width: 100%;
+    height: 400px; /* Altura del mapa */
+}

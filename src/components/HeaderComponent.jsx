@@ -25,9 +25,7 @@ function HeaderComponent() {
             <Dropdown show={showCart} onToggle={() => setShowCart(!showCart)} align="end">
               <Dropdown.Toggle as={Button} variant="dark">
                 <FaShoppingCart size={20} />
-                {totalItems > 0 && (
-                  <Badge bg="light" text="dark" className="ms-1">{totalItems}</Badge>
-                )}
+                {totalItems > 0 && <Badge bg="light" text="dark" className="ms-1">{totalItems}</Badge>}
               </Dropdown.Toggle>
 
               <Dropdown.Menu style={{ minWidth: '300px', right: 0 }}>
@@ -37,14 +35,8 @@ function HeaderComponent() {
                   cartItems.map((item, index) => (
                     <Dropdown.Item key={index} className="d-flex justify-content-between align-items-center">
                       <span>{item.name}</span>
-                      <span>${item.price}</span>
-                      <Button
-                        size="sm"
-                        variant="danger"
-                        onClick={() => removeFromCart(index)}
-                      >
-                        X
-                      </Button>
+                      <span>${item.price.toLocaleString()}</span>
+                      <Button size="sm" variant="danger" onClick={() => removeFromCart(item.id)}>X</Button>
                     </Dropdown.Item>
                   ))
                 )}
