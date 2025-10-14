@@ -150,6 +150,9 @@ function RegisterPages() {
               onChange={handleChange}
               required
             />
+            <Form.Text className="text-light">
+              La contraseña debe tener al menos 8 caracteres, incluir un número y un símbolo.
+            </Form.Text>
           </Form.Group>
 
           <Form.Group className="mb-3">
