@@ -22,7 +22,48 @@ function LoginPages() {
   };
 
   return (
-    
+    <Container className="main-container">
+      <div className="form-container">
+        {error && <Alert variant="danger">{error}</Alert>}
+        
+        <Form onSubmit={handleLogin}>
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="inputEmail">Email</Form.Label>
+            <Form.Control
+              type="email"
+              id="inputEmail"
+              placeholder="email@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="inputPassword">Password</Form.Label>
+            <Form.Control
+              type="password"
+              id="inputPassword"
+              placeholder="Tu contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </Form.Group>
+
+          <div className="botones">
+            <Link to="/registro">
+              <Button className="btn-register" type="button">
+                Registrarse
+              </Button>
+            </Link>
+            <Button className="btn-login" type="submit">
+              Iniciar Sesión
+            </Button>
+          </div>
+        </Form>
+      </div>
+    </Container>
   )
 }
 
