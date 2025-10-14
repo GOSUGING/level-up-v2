@@ -7,9 +7,17 @@ function LoginPages() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const validateEmail = (email) => {
+    const regex = /\S+@\S+\.\S+/;
+    return regex.test(email);
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
     // Lógica de autenticación
     console.log('Iniciando sesión con:', { email, password });
     // Por ahora solo validamos que los campos no estén vacíos
@@ -17,8 +25,18 @@ function LoginPages() {
       setError('Por favor complete todos los campos');
       return;
     }
-    // Resetear error si todo está bien
-    setError('');
+
+    // Validar formato de correo electrónico
+    if (!validateEmail(email)) {
+      setError('Por favor ingrese un correo electrónico válido');
+      return;
+    }
+    
+    // Aquí iría la lógica de autenticación
+    console.log('Iniciando sesión con:', { email, password });
+    
+    // Mostrar mensaje de éxito
+    setSuccess('¡Inicio de sesión exitoso!');
   };
 
   return (
@@ -67,7 +85,7 @@ function LoginPages() {
               ¿No tienes una cuenta? <Link to="/registro">¡Regístrate!</Link>
             </p>
           </div>
-          
+
         </Form>
       </div>
     </Container>
