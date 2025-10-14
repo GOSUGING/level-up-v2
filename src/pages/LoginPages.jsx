@@ -36,7 +36,7 @@ function LoginPages() {
     console.log('Iniciando sesión con:', { email, password });
     
     // Mostrar mensaje de éxito
-    setSuccess('¡Inicio de sesión exitoso!');
+    etSuccess(`¡Bienvenido! Has iniciado sesión exitosamente con ${email}`);
   };
 
   return (
