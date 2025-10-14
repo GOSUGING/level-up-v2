@@ -61,6 +61,13 @@ function LoginPages() {
               Iniciar Sesión
             </Button>
           </div>
+
+          <div className="text-center mt-3">
+            <p className="register-link">
+              ¿No tienes una cuenta? <Link to="/registro">¡Regístrate!</Link>
+            </p>
+          </div>
+          
         </Form>
       </div>
     </Container>
