@@ -13,6 +13,8 @@ function RegisterPages() {
     password2: ''
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
 
   // Establecer la fecha máxima (hoy)
   useEffect(() => {
@@ -28,12 +30,57 @@ function RegisterPages() {
     });
   };
 
+  // Validar formato de correo electrónico
+  const validateEmail = (email) => {
+    const regex = /\S+@\S+\.\S+/;
+    return regex.test(email);
+  };
+
+  // Validar fuerza de contraseña
+  const validatePassword = (password) => {
+    // Mínimo 8 caracteres, al menos un número y un símbolo
+    const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+    return regex.test(password);
+  };
+
+  // Validar edad mínima (13 años)
+  const validateAge = (birthDate) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    
+    return age >= 13;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     
     // Validaciones básicas
     if (!formData.nombre || !formData.email || !formData.fechaNacimiento || !formData.password || !formData.password2) {
       setError('Por favor complete todos los campos');
+      return;
+    }
+
+    // Validar formato de correo electrónico
+    if (!validateEmail(formData.email)) {
+      setError('Por favor ingrese un correo electrónico válido');
+      return;
+    }
+    
+    // Validar edad mínima
+    if (!validateAge(formData.fechaNacimiento)) {
+      setError('Debes tener al menos 13 años para registrarte');
+      return;
+    }
+    
+    // Validar fuerza de contraseña
+    if (!validatePassword(formData.password)) {
+      setError('La contraseña debe tener al menos 8 caracteres, incluir un número y un símbolo');
       return;
     }
     
@@ -44,7 +91,7 @@ function RegisterPages() {
     
     // Aquí iría la lógica de registro
     console.log('Registrando usuario:', formData);
-    setError('');
+    setSuccess('¡Registro exitoso! Ya puedes iniciar sesión');
   };
 
   return (
@@ -53,7 +100,9 @@ function RegisterPages() {
         <h2>Formulario de Registro</h2>
         
         {error && <Alert variant="danger" id="errorMsg">{error}</Alert>}
-        
+        {success && <Alert variant="success" id="successMsg">{success}</Alert>}
+
+
         <Form id="registroForm" onSubmit={handleSubmit} noValidate>
           <Form.Group className="mb-3">
             <Form.Label htmlFor="nombre">Nombre completo</Form.Label>
