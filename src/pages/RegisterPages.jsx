@@ -48,7 +48,79 @@ function RegisterPages() {
   };
 
   return (
-    <> <h1>Register</h1> </>
+    <Container className="main-container">
+      <div className="form-container">
+        <h2>Formulario de Registro</h2>
+        
+        {error && <Alert variant="danger" id="errorMsg">{error}</Alert>}
+        
+        <Form id="registroForm" onSubmit={handleSubmit} noValidate>
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="nombre">Nombre completo</Form.Label>
+            <Form.Control
+              type="text"
+              id="nombre"
+              name="nombre"
+              value={formData.nombre}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="email">Correo electrónico</Form.Label>
+            <Form.Control
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="fechaNacimiento">Fecha de nacimiento</Form.Label>
+            <Form.Control
+              type="date"
+              id="fechaNacimiento"
+              name="fechaNacimiento"
+              value={formData.fechaNacimiento}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="password">Contraseña</Form.Label>
+            <Form.Control
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="password2">Confirmar contraseña</Form.Label>
+            <Form.Control
+              type="password"
+              id="password2"
+              name="password2"
+              value={formData.password2}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+
+          <Button type="submit" className="btn-register w-100">
+            Registrarse
+          </Button>
+        </Form>
+      </div>
+    </Container>
   )
 }
 
