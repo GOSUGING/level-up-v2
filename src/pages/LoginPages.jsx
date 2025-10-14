@@ -36,13 +36,14 @@ function LoginPages() {
     console.log('Iniciando sesión con:', { email, password });
     
     // Mostrar mensaje de éxito
-    etSuccess(`¡Bienvenido! Has iniciado sesión exitosamente con ${email}`);
+    setSuccess(`¡Bienvenido! Has iniciado sesión exitosamente con ${email}`);
   };
 
   return (
     <Container className="main-container">
       <div className="form-container">
         {error && <Alert variant="danger">{error}</Alert>}
+        {success && <Alert variant="success" id="successMsg">{success}</Alert>}
         
         <Form onSubmit={handleLogin}>
           <Form.Group className="mb-3">
