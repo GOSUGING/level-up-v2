@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import '../App.css';
 
 function RegisterPages() {
-
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -14,7 +13,13 @@ function RegisterPages() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
+  const [touched, setTouched] = useState({
+    nombre: false,
+    email: false,
+    fechaNacimiento: false,
+    password: false,
+    password2: false
+  });
 
   // Establecer la fecha máxima (hoy)
   useEffect(() => {
@@ -22,11 +27,25 @@ function RegisterPages() {
     document.getElementById('fechaNacimiento').setAttribute('max', today);
   }, []);
 
+  // Efecto para validar en tiempo real cuando cambian los datos
+  useEffect(() => {
+    if (Object.values(touched).some(field => field)) {
+      validateForm();
+    }
+  }, [formData, touched]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value
+    });
+  };
+
+  const handleBlur = (field) => {
+    setTouched({
+      ...touched,
+      [field]: true
     });
   };
 
@@ -57,41 +76,96 @@ function RegisterPages() {
     return age >= 13;
   };
 
+  const validateForm = () => {
+    setError('');
+    setSuccess('');
+    
+    // Validaciones por campo
+    if (touched.nombre && !formData.nombre) {
+      setError('Por favor ingrese su nombre completo');
+      return false;
+    }
+    
+    if (touched.email && !formData.email) {
+      setError('Por favor ingrese su correo electrónico');
+      return false;
+    }
+    
+    if (touched.email && formData.email && !validateEmail(formData.email)) {
+      setError('Por favor ingrese un correo electrónico válido');
+      return false;
+    }
+    
+    if (touched.fechaNacimiento && !formData.fechaNacimiento) {
+      setError('Por favor ingrese su fecha de nacimiento');
+      return false;
+    }
+    
+    if (touched.fechaNacimiento && formData.fechaNacimiento && !validateAge(formData.fechaNacimiento)) {
+      setError('Debes tener al menos 13 años para registrarte');
+      return false;
+    }
+    
+    if (touched.password && !formData.password) {
+      setError('Por favor ingrese una contraseña');
+      return false;
+    }
+    
+    if (touched.password && formData.password && !validatePassword(formData.password)) {
+      setError('La contraseña debe tener al menos 8 caracteres, incluir un número y un símbolo');
+      return false;
+    }
+    
+    if (touched.password2 && !formData.password2) {
+      setError('Por favor confirme su contraseña');
+      return false;
+    }
+    
+    if (touched.password2 && formData.password2 && formData.password !== formData.password2) {
+      setError('Las contraseñas no coinciden');
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validaciones básicas
-    if (!formData.nombre || !formData.email || !formData.fechaNacimiento || !formData.password || !formData.password2) {
-      setError('Por favor complete todos los campos');
-      return;
-    }
-
-    // Validar formato de correo electrónico
-    if (!validateEmail(formData.email)) {
-      setError('Por favor ingrese un correo electrónico válido');
-      return;
-    }
+    // Marcar todos los campos como tocados
+    setTouched({
+      nombre: true,
+      email: true,
+      fechaNacimiento: true,
+      password: true,
+      password2: true
+    });
     
-    // Validar edad mínima
-    if (!validateAge(formData.fechaNacimiento)) {
-      setError('Debes tener al menos 13 años para registrarte');
-      return;
+    if (validateForm()) {
+      // Aquí iría la lógica de registro
+      console.log('Registrando usuario:', formData);
+      setSuccess('¡Registro exitoso! Ya puedes iniciar sesión');
+      
+      // Mantener el mensaje de éxito y limpiar el formulario
+      setFormData({
+        nombre: '',
+        email: '',
+        fechaNacimiento: '',
+        password: '',
+        password2: ''
+      });
+      
+      // Resetear los campos tocados
+      setTouched({
+        nombre: false,
+        email: false,
+        fechaNacimiento: false,
+        password: false,
+        password2: false
+      });
+      
+      // No limpiar el mensaje de éxito automáticamente
     }
-    
-    // Validar fuerza de contraseña
-    if (!validatePassword(formData.password)) {
-      setError('La contraseña debe tener al menos 8 caracteres, incluir un número y un símbolo');
-      return;
-    }
-    
-    if (formData.password !== formData.password2) {
-      setError('Las contraseñas no coinciden');
-      return;
-    }
-    
-    // Aquí iría la lógica de registro
-    console.log('Registrando usuario:', formData);
-    setSuccess('¡Registro exitoso! Ya puedes iniciar sesión');
   };
 
   return (
@@ -101,8 +175,7 @@ function RegisterPages() {
         
         {error && <Alert variant="danger" id="errorMsg">{error}</Alert>}
         {success && <Alert variant="success" id="successMsg">{success}</Alert>}
-
-
+        
         <Form id="registroForm" onSubmit={handleSubmit} noValidate>
           <Form.Group className="mb-3">
             <Form.Label htmlFor="nombre">Nombre completo</Form.Label>
@@ -112,6 +185,7 @@ function RegisterPages() {
               name="nombre"
               value={formData.nombre}
               onChange={handleChange}
+              onBlur={() => handleBlur('nombre')}
               required
             />
           </Form.Group>
@@ -124,6 +198,7 @@ function RegisterPages() {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              onBlur={() => handleBlur('email')}
               required
             />
           </Form.Group>
@@ -136,6 +211,7 @@ function RegisterPages() {
               name="fechaNacimiento"
               value={formData.fechaNacimiento}
               onChange={handleChange}
+              onBlur={() => handleBlur('fechaNacimiento')}
               required
             />
           </Form.Group>
@@ -148,6 +224,7 @@ function RegisterPages() {
               name="password"
               value={formData.password}
               onChange={handleChange}
+              onBlur={() => handleBlur('password')}
               required
             />
             <Form.Text className="text-light">
@@ -163,6 +240,7 @@ function RegisterPages() {
               name="password2"
               value={formData.password2}
               onChange={handleChange}
+              onBlur={() => handleBlur('password2')}
               required
             />
           </Form.Group>
@@ -173,7 +251,7 @@ function RegisterPages() {
         </Form>
       </div>
     </Container>
-  )
+  );
 }
 
-export default RegisterPages
+export default RegisterPages;
