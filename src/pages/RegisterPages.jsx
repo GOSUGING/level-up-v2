@@ -58,7 +58,7 @@ function RegisterPages() {
   // Validar fuerza de contraseña
   const validatePassword = (password) => {
     // Mínimo 8 caracteres, al menos un número y un símbolo
-    const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+    const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*-])(?=.{8,})/;
     return regex.test(password);
   };
 
