@@ -59,7 +59,7 @@ function LoginPages() {
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label htmlFor="inputPassword">Password</Form.Label>
+            <Form.Label htmlFor="inputPassword">Contraseña</Form.Label>
             <Form.Control
               type="password"
               id="inputPassword"
