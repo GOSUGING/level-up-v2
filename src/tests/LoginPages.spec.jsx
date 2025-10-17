@@ -1,69 +1,86 @@
-import { render, screen, fireEvent } from "@testing-library/react"; // Importa utilidades de testing
-import { BrowserRouter } from "react-router-dom"; // Importa el enrutador para pruebas de componentes con rutas
-import LoginPages from "../pages/LoginPages"; // Importa el componente a testear
+import { render, screen, fireEvent } from "@testing-library/react"; 
+import { BrowserRouter } from "react-router-dom"; 
+import LoginPages from "../pages/LoginPages"; 
 
-describe("Componentes LoginPages", () => { // Agrupa los tests del componente Login
+describe("Componentes LoginPages", () => { 
 
-  it('renderiza el formulario EMAIL correctamente y permite escribir', () => { // Test para el input de Email
+  /**
+   * Test: Input de Email
+   * Verifica que el campo "Email" se renderice correctamente y permita al usuario escribir.
+   */
+  it('renderiza el formulario EMAIL correctamente y permite escribir', () => { 
     render(
       <BrowserRouter>
         <LoginPages />
       </BrowserRouter>
     );
 
-    const emailInput = screen.getByLabelText(/Email/i); // Obtiene el input de Email
-    expect(emailInput).toBeInTheDocument(); // Verifica que exista en el DOM
+    const emailInput = screen.getByLabelText(/Email/i); 
+    expect(emailInput).toBeInTheDocument(); 
 
-    fireEvent.change(emailInput, { target: { value: "usuario@test.com" } }); // Simula escritura
-    expect(emailInput.value).toBe("usuario@test.com"); // Verifica que el valor se haya actualizado
+    fireEvent.change(emailInput, { target: { value: "usuario@test.com" } }); 
+    expect(emailInput.value).toBe("usuario@test.com"); 
   });
 
-  it('renderiza el formulario CONTRASEÑA correctamente y permite escribir', () => { // Test para el input de Contraseña
+  /**
+   * Test: Input de Contraseña
+   * Verifica que el campo "Contraseña" se renderice correctamente y permita al usuario escribir.
+   */
+  it('renderiza el formulario CONTRASEÑA correctamente y permite escribir', () => { 
     render(
       <BrowserRouter>
         <LoginPages />
       </BrowserRouter>
     );
 
-    const passwordInput = screen.getByLabelText(/Contraseña/i); // Obtiene el input de Contraseña
-    expect(passwordInput).toBeInTheDocument(); // Verifica que exista en el DOM
+    const passwordInput = screen.getByLabelText(/Contraseña/i); 
+    expect(passwordInput).toBeInTheDocument(); 
 
-    fireEvent.change(passwordInput, { target: { value: "123456" } }); // Simula escritura
-    expect(passwordInput.value).toBe("123456"); // Verifica que el valor se haya actualizado
+    fireEvent.change(passwordInput, { target: { value: "123456" } }); 
+    expect(passwordInput.value).toBe("123456"); 
   });
 
-  it('Renderiza el botón "Iniciar Sesión" y permite usar los textfields antes de hacer clic', () => { // Test para el botón de login
+  /**
+   * Test: Interacción completa con formulario
+   * Verifica que los campos de Email y Contraseña sean interactivos antes de hacer clic en "Iniciar Sesión"
+   * y que el botón exista en el DOM.
+   */
+  it('Renderiza el botón "Iniciar Sesión" y permite usar los textfields antes de hacer clic', () => { 
     render(
       <BrowserRouter>
         <LoginPages />
       </BrowserRouter>
     );
 
-    const emailInput = screen.getByLabelText(/Email/i); // Obtiene el input de Email
-    const passwordInput = screen.getByLabelText(/Contraseña/i); // Obtiene el input de Contraseña
-    const loginButton = screen.getByRole("button", { name: /iniciar sesión/i }); // Obtiene el botón de login
+    const emailInput = screen.getByLabelText(/Email/i); 
+    const passwordInput = screen.getByLabelText(/Contraseña/i); 
+    const loginButton = screen.getByRole("button", { name: /iniciar sesión/i }); 
 
-    expect(emailInput).toBeInTheDocument(); // Verifica existencia de Email
-    expect(passwordInput).toBeInTheDocument(); // Verifica existencia de Contraseña
-    expect(loginButton).toBeInTheDocument(); // Verifica existencia del botón
+    expect(emailInput).toBeInTheDocument(); 
+    expect(passwordInput).toBeInTheDocument(); 
+    expect(loginButton).toBeInTheDocument(); 
 
-    fireEvent.change(emailInput, { target: { value: "usuario@test.com" } }); // Simula escritura en Email
-    fireEvent.change(passwordInput, { target: { value: "123456" } }); // Simula escritura en Contraseña
+    fireEvent.change(emailInput, { target: { value: "usuario@test.com" } }); 
+    fireEvent.change(passwordInput, { target: { value: "123456" } }); 
 
-    expect(emailInput.value).toBe("usuario@test.com"); // Verifica valor Email
-    expect(passwordInput.value).toBe("123456"); // Verifica valor Contraseña
+    expect(emailInput.value).toBe("usuario@test.com"); 
+    expect(passwordInput.value).toBe("123456"); 
 
-    fireEvent.click(loginButton); // Simula clic en el botón de login
+    fireEvent.click(loginButton); 
   });
 
-  it('Renderiza el texto direccional "Registrarse"', () => { // Test para el enlace de registro
+  /**
+   * Test: Enlace de registro
+   * Verifica que el texto/enlace "¡Regístrate!" se renderice correctamente y sea visible para el usuario.
+   */
+  it('Renderiza el texto direccional "Registrarse"', () => { 
     render(
       <BrowserRouter>
         <LoginPages />
       </BrowserRouter>
     );
 
-    const registerLink = screen.getByRole("link", { name: /¡Regístrate!/i }); // Obtiene el enlace de registro
-    expect(registerLink).toBeInTheDocument(); // Verifica que exista en el DOM
+    const registerLink = screen.getByRole("link", { name: /¡Regístrate!/i }); 
+    expect(registerLink).toBeInTheDocument(); 
   });
 });
