@@ -71,11 +71,6 @@ function LoginPages() {
           </Form.Group>
 
           <div className="botones">
-            <Link to="/registro">
-              <Button className="btn-register" type="button">
-                Registrarse
-              </Button>
-            </Link>
             <Button className="btn-login" type="submit">
               Iniciar Sesión
             </Button>
