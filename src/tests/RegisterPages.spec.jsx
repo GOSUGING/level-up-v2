@@ -4,7 +4,13 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import RegisterPages from '../pages/RegisterPages.jsx';
 
-describe('RegisterPages', () => {
+describe('Componentes RegisterPages', () => {
+  
+  /**
+   * Test: Validación de nombre vacío
+   * Verifica que se muestre un mensaje de error cuando el campo "Nombre completo" 
+   * pierde el foco estando vacío.
+   */
   it('Muestra error cuando el nombre está vacío al perder el foco', () => {
     render(
       <MemoryRouter>
@@ -18,6 +24,11 @@ describe('RegisterPages', () => {
     expect(screen.getByText('Por favor ingrese su nombre completo')).toBeInTheDocument();
   });
 
+  /**
+   * Test: Validación secuencial de nombre y email
+   * Verifica que después de corregir el nombre vacío, se muestre el mensaje
+   * de error correspondiente a un email inválido.
+   */
   it('Reemplaza el error por email inválido después de corregir el nombre', () => {
     render(
       <MemoryRouter>
@@ -28,11 +39,9 @@ describe('RegisterPages', () => {
     const nombreInput = screen.getByLabelText(/Nombre completo/i);
     const emailInput = screen.getByLabelText(/Correo electrónico/i);
 
-    // Provoca error de nombre vacío
     fireEvent.blur(nombreInput);
     expect(screen.getByText('Por favor ingrese su nombre completo')).toBeInTheDocument();
 
-    // Corrige nombre y provoca email inválido
     fireEvent.change(nombreInput, { target: { value: 'Barbara Arancibia' } });
     fireEvent.change(emailInput, { target: { value: 'correito' } });
     fireEvent.blur(emailInput);
@@ -40,6 +49,11 @@ describe('RegisterPages', () => {
     expect(screen.getByText('Por favor ingrese un correo electrónico válido')).toBeInTheDocument();
   });
 
+  /**
+   * Test: Validación de edad mínima
+   * Verifica que se muestre un mensaje de error si la fecha de nacimiento 
+   * indica que el usuario tiene menos de 13 años.
+   */
   it('Muestra error si la edad es menor a 13 años', () => {
     render(
       <MemoryRouter>
@@ -49,13 +63,17 @@ describe('RegisterPages', () => {
 
     const fechaInput = screen.getByLabelText(/Fecha de nacimiento/i);
 
-    // Fecha claramente menor a 13 años
     fireEvent.change(fechaInput, { target: { value: '2020-01-01' } });
     fireEvent.blur(fechaInput);
 
     expect(screen.getByText('Debes tener al menos 13 años para registrarte')).toBeInTheDocument();
   });
 
+  /**
+   * Test: Validación de contraseña
+   * Verifica que se muestre un mensaje de error si la contraseña no cumple
+   * con los requisitos mínimos (longitud, número y símbolo).
+   */
   it('Muestra error si la contraseña no cumple los requisitos', () => {
     render(
       <MemoryRouter>
@@ -73,6 +91,11 @@ describe('RegisterPages', () => {
     ).toBeInTheDocument();
   });
 
+  /**
+   * Test: Confirmación de contraseña vacía
+   * Verifica que se muestre un mensaje de error si el usuario no confirma
+   * la contraseña antes de enviar el formulario.
+   */
   it('Muestra error si la confirmación de contraseña está vacía', () => {
     render(
       <MemoryRouter>
@@ -89,6 +112,11 @@ describe('RegisterPages', () => {
     expect(screen.getByText('Por favor confirme su contraseña')).toBeInTheDocument();
   });
 
+  /**
+   * Test: Contraseñas no coinciden
+   * Verifica que se muestre un error si los campos de contraseña y confirmación
+   * no son iguales.
+   */
   it('Muestra error si las contraseñas no coinciden', () => {
     render(
       <MemoryRouter>
@@ -106,6 +134,11 @@ describe('RegisterPages', () => {
     expect(screen.getByText('Las contraseñas no coinciden')).toBeInTheDocument();
   });
 
+  /**
+   * Test: Registro exitoso
+   * Verifica que al ingresar datos válidos, se muestre un mensaje de éxito 
+   * y los campos del formulario se vacíen.
+   */
   it('Muestra mensaje de éxito y limpia los campos tras registro válido', () => {
     render(
       <MemoryRouter>
@@ -137,6 +170,10 @@ describe('RegisterPages', () => {
     expect(password2Input).toHaveValue('');
   });
 
+  /**
+   * Test: Botón de registro
+   * Verifica que el botón de envío del formulario exista y sea de tipo "submit".
+   */
   it('Verifica que el botón de registro existe y es de tipo submit', () => {
     render(
       <MemoryRouter>

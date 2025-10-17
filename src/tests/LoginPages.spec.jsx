@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react"; // Importa u
 import { BrowserRouter } from "react-router-dom"; // Importa el enrutador para pruebas de componentes con rutas
 import LoginPages from "../pages/LoginPages"; // Importa el componente a testear
 
-describe("Componente Login", () => { // Agrupa los tests del componente Login
+describe("Componentes LoginPages", () => { // Agrupa los tests del componente Login
 
   it('renderiza el formulario EMAIL correctamente y permite escribir', () => { // Test para el input de Email
     render(
