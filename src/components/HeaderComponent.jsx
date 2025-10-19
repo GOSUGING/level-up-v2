@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Navbar, Nav, Container, Badge, Dropdown, Button } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom'; // 👈 agregamos useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { FaShoppingCart } from 'react-icons/fa';
 
@@ -25,7 +25,11 @@ function HeaderComponent() {
 
             {/* Carrito como icono */}
             <Dropdown show={showCart} onToggle={() => setShowCart(!showCart)} align="end">
-              <Dropdown.Toggle as={Button} variant="dark">
+              <Dropdown.Toggle
+                as={Button}
+                variant="dark"
+                aria-label="shopping cart" // ✅ Esto permite que Testing Library encuentre el botón
+              >
                 <FaShoppingCart size={20} />
                 {totalItems > 0 && <Badge bg="light" text="dark" className="ms-1">{totalItems}</Badge>}
               </Dropdown.Toggle>
@@ -39,7 +43,13 @@ function HeaderComponent() {
                       <Dropdown.Item key={index} className="d-flex justify-content-between align-items-center">
                         <span>{item.name}</span>
                         <span>${item.price.toLocaleString()}</span>
-                        <Button size="sm" variant="danger" onClick={() => removeFromCart(item.id)}>X</Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => removeFromCart(item.id)}
+                        >
+                          X
+                        </Button>
                       </Dropdown.Item>
                     ))}
                     <Dropdown.Divider />
