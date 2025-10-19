@@ -2,13 +2,16 @@ import React, { useContext, useMemo, useState } from 'react';
 import { Container, Row, Col, ListGroup, Form, Button, Alert, Card } from 'react-bootstrap';
 import { CartContext } from '../context/CartContext';
 
-function PurchagePages() {
+function PurchasePages() {
+  // Obtiene los ítems del carrito del contexto global.
   const { cartItems } = useContext(CartContext);
 
+  // Calcula el monto total de la compra (optimizado con useMemo).
   const total = useMemo(() => {
     return cartItems.reduce((sum, item) => sum + (item.price || 0), 0);
   }, [cartItems]);
 
+  // Estado local para los campos del formulario y la retroalimentación de la validación.
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [expiry, setExpiry] = useState(''); // MM/YY
@@ -16,8 +19,10 @@ function PurchagePages() {
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
 
+  // Función de utilidad para eliminar caracteres no numéricos.
   const sanitizeNumber = (value) => value.replace(/\D/g, '');
 
+  // Detecta el tipo de tarjeta (visa, mastercard, amex, discover) basado en el prefijo.
   const detectCardType = (num) => {
     const n = sanitizeNumber(num);
     if (/^4/.test(n)) return 'visa';
@@ -27,6 +32,7 @@ function PurchagePages() {
     return 'unknown';
   };
 
+  // Valida el formato de la fecha de expiración (MM/YY) y verifica que no esté vencida.
   const validateExpiry = (value) => {
     // Expect MM/YY
     const match = value.match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
@@ -43,6 +49,7 @@ function PurchagePages() {
     return true;
   };
 
+  // Valida el CVV (3 dígitos por defecto, 4 para American Express).
   const validateCvv = (value) => {
     const type = detectCardType(cardNumber);
     const digitsOnly = /^\d+$/;
@@ -51,16 +58,13 @@ function PurchagePages() {
     return value.length === 3;
   };
 
+  // Valida el nombre del titular (solo letras y espacios, mínimo 2 caracteres).
   const validateName = (value) => {
     const re = /^[A-Za-zÁÉÍÓÚÑáéíóúñ ]{2,}$/;
     return re.test(value.trim());
   };
 
-  const validateCardNumber = (num) => {
-    const n = sanitizeNumber(num);
-    return n.length === 16;
-  };
-
+  // Formatea el número de tarjeta para mostrarlo con espacios (4-4-4-4 o 4-6-5 para Amex).
   const formatCardNumber = (num) => {
     const n = sanitizeNumber(num);
     const type = detectCardType(num);
@@ -74,10 +78,12 @@ function PurchagePages() {
     return n.replace(/(.{1,4})/g, '$1 ').trim();
   };
 
+  // Manejador del pago: ejecuta todas las validaciones y simula la transacción.
   const handlePay = (e) => {
     e.preventDefault();
     const newErrors = {};
 
+    // Ejecución de validaciones
     if (!validateName(cardName)) newErrors.cardName = 'Nombre inválido (solo letras y espacios).';
     const digits = sanitizeNumber(cardNumber);
     if (!digits) newErrors.cardNumber = 'Por favor ingrese el número de tarjeta.';
@@ -88,19 +94,23 @@ function PurchagePages() {
     setErrors(newErrors);
     setSuccess('');
 
+    // Si no hay errores, simula el éxito
     if (Object.keys(newErrors).length === 0) {
       // Es una maqueta: no se envía a ningún servicio.
       setSuccess('Pago simulado exitosamente. ¡Gracias por tu compra!');
     }
   };
 
+  // Tipo de tarjeta detectado para modificar la UI (ej. longitud del CVV)
   const cardType = detectCardType(cardNumber);
 
+  // Estructura de la página (Resumen del carrito + Formulario de Pago)
   return (
     <main>
       <Container className="page-container">
         <h2>Resumen de Compra</h2>
         <Row className="mt-3">
+          {/* Columna de resumen del carrito */}
           <Col md={6}>
             <Card className="cart-container">
               <Card.Body>
@@ -109,6 +119,7 @@ function PurchagePages() {
                   <p>Tu carrito está vacío.</p>
                 ) : (
                   <ListGroup>
+                    {/* Lista de ítems */}
                     {cartItems.map((item) => (
                       <ListGroup.Item key={item.id} className="cart-list-item">
                         <span>{item.name}</span>
@@ -124,12 +135,15 @@ function PurchagePages() {
             </Card>
           </Col>
 
+          {/* Columna del formulario de pago */}
           <Col md={6}>
             <div className="form-container">
               <h5>Datos de la Tarjeta</h5>
+              {/* Alerta de éxito */}
               {success && <Alert variant="success">{success}</Alert>}
 
               <Form onSubmit={handlePay}>
+                {/* Campo: Nombre del titular */}
                 <Form.Group className="mb-3" controlId="cardName">
                   <Form.Label>Nombre del titular</Form.Label>
                   <Form.Control
@@ -142,6 +156,7 @@ function PurchagePages() {
                   <Form.Control.Feedback type="invalid">{errors.cardName}</Form.Control.Feedback>
                 </Form.Group>
 
+                {/* Campo: Número de tarjeta (muestra formateado, guarda sanitizado) */}
                 <Form.Group className="mb-3" controlId="cardNumber">
                   <Form.Label>Número de tarjeta</Form.Label>
                   <Form.Control
@@ -155,6 +170,7 @@ function PurchagePages() {
                 </Form.Group>
 
                 <Row>
+                  {/* Campo: Fecha de vencimiento */}
                   <Col md={6}>
                     <Form.Group className="mb-3" controlId="expiry">
                       <Form.Label>Fecha de vencimiento (MM/YY)</Form.Label>
@@ -168,6 +184,7 @@ function PurchagePages() {
                       <Form.Control.Feedback type="invalid">{errors.expiry}</Form.Control.Feedback>
                     </Form.Group>
                   </Col>
+                  {/* Campo: CVV (la etiqueta y placeholder cambian por tipo de tarjeta) */}
                   <Col md={6}>
                     <Form.Group className="mb-3" controlId="cvv">
                       <Form.Label>CVV {cardType === 'amex' ? '(4 dígitos)' : '(3 dígitos)'}</Form.Label>
@@ -183,6 +200,7 @@ function PurchagePages() {
                   </Col>
                 </Row>
 
+                {/* Botón de pago (deshabilitado si el carrito está vacío) */}
                 <Button
                   type="submit"
                   variant="success"
@@ -203,4 +221,4 @@ function PurchagePages() {
   );
 }
 
-export default PurchagePages;
+export default PurchasePages;
