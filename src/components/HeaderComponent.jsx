@@ -20,6 +20,7 @@ function HeaderComponent() {
             <Nav.Link as={Link} to="/productos">Productos</Nav.Link>
             <Nav.Link as={Link} to="/registro">Registrarse</Nav.Link>
             <Nav.Link as={Link} to="/login">Iniciar Sesión</Nav.Link>
+            <Nav.Link as={Link} to="/pago">Pagar</Nav.Link>
 
             {/* Carrito como icono */}
             <Dropdown show={showCart} onToggle={() => setShowCart(!showCart)} align="end">
