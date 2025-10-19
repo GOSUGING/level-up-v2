@@ -6,6 +6,7 @@ import HomePages from './pages/HomePages';
 import ProductsPages from './pages/ProductsPages';
 import RegisterPages from './pages/RegisterPages';
 import LoginPages from './pages/LoginPages';
+import PurchasePages from './pages/PurchasePages';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Footer from './components/Footer';
@@ -22,6 +23,7 @@ function App() {
             <Route path='/productos' element={<ProductsPages />} />
             <Route path='/registro' element={<RegisterPages />} />
             <Route path='/login' element={<LoginPages />} />
+            <Route path='/pago' element={<PurchasePages />} />
           </Routes>
         </div>
         <Footer />
