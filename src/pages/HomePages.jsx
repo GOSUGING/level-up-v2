@@ -12,26 +12,25 @@ function HomePages() {
             <img src="/assets/img/signal-5153517_1280.jpg" className="d-block w-100" alt="Gamer Zone" />
             <Carousel.Caption>
               <h5>Gamer Zone</h5>
-              <p>Level Up: La leyenda del gaming chileno. Desde 1980, hemos equipado a generaciones de jugadores. 
-                Orgullosos de nuestro trabajo, forjamos el presente y el futuro de los eSports en Valparaíso. 
-                ¡Nuestra historia es tu mejor upgrade!</p>
+              <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Possimus esse sint debitis sapiente
+                praesentium, eaque amet iusto sunt, cum dolore deserunt quod ullam fuga odit, doloremque alias id animi distinctio.</p>
             </Carousel.Caption>
           </Carousel.Item>
           <Carousel.Item>
             <img src="/assets/img/playstation-2617305_640.jpg" className="d-block w-100" alt="Joysticks" />
             <Carousel.Caption>
               <h5>Joysticks</h5>
-              <p>No somos nuevos, somos Top 1. Level Up, tu tienda de Valparaiso, se ha ganado la cima del ranking siendo el Top 1 en ventas. 
-                Esta calidad y servicio, nacidos en 1980, nos hacen merecedores de tu confianza. ¡Juega con los líderes!</p>
+              <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ipsam illum odio numquam
+                accusantium quis, suscipit quibusdam reiciendis.</p>
             </Carousel.Caption>
           </Carousel.Item>
           <Carousel.Item>
             <img src="/assets/img/gaming-computer-6903836_640.jpg" className="d-block w-100" alt="Pc gamers" />
             <Carousel.Caption>
               <h5>Pc gamers</h5>
-              <p>¿Necesitas el mejor loot? En Level Up, desde 1980, nuestra pasión es brindarte el mejor soporte. 
-                Estamos orgullosos de nuestro trabajo y del impacto que tiene en la comunidad, 
-                desde aquí hasta Valparaíso. ¡Te esperamos en nuestra base!</p>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti voluptas, quasi
+                similique accusamus sapiente quas sint saepe quidem quibusdam asperiores hic magnam qui et error odit
+                facere iste corrupti repellendus.</p>
             </Carousel.Caption>
           </Carousel.Item>
         </Carousel>
