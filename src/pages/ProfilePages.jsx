@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom'; // 👈 importa Navigate
 import { Form, Button, Alert } from 'react-bootstrap';
 import { AuthContext } from '../context/AuthContext';
 import '../Profilepage.css';
@@ -52,7 +53,8 @@ export default function ProfilePage() {
     setTimeout(() => setSuccess(''), 3500);
   };
 
-  if (!user) return null;
+  // 👇 En vez de "return null", redirigimos si no hay user
+  if (!user) return <Navigate to="/login" replace />;
 
   return (
     <div className="profile-page">

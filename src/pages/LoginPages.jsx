@@ -1,51 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import '../App.css';
 
 function LoginPages() {
+  const { user, login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const validateEmail = (email) => {
-    const regex = /\S+@\S+\.\S+/;
-    return regex.test(email);
-  };
+  // Si ya hay sesión, redirige a /perfil
+  useEffect(() => {
+    if (user) navigate('/perfil');
+  }, [user, navigate]);
 
-  const handleLogin = (e) => {
+  const validateEmail = (value) => /\S+@\S+\.\S+/.test(value);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
-    // Lógica de autenticación
-    console.log('Iniciando sesión con:', { email, password });
-    // Por ahora solo validamos que los campos no estén vacíos
+
     if (!email || !password) {
       setError('Por favor complete todos los campos');
       return;
     }
-
-    // Validar formato de correo electrónico
     if (!validateEmail(email)) {
       setError('Por favor ingrese un correo electrónico válido');
       return;
     }
-    
-    // Aquí iría la lógica de autenticación
-    console.log('Iniciando sesión con:', { email, password });
-    
-    // Mostrar mensaje de éxito
-    setSuccess(`¡Bienvenido! Has iniciado sesión exitosamente con ${email}`);
+
+    setLoading(true);
+    try {
+      await login({ email, password });
+      navigate('/perfil');
+    } catch (err) {
+      setError(err?.message || 'Error al iniciar sesión. Intente nuevamente.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Container className="main-container">
       <div className="form-container">
         {error && <Alert variant="danger">{error}</Alert>}
-        {success && <Alert variant="success" id="successMsg">{success}</Alert>}
-        
-        <Form onSubmit={handleLogin}>
+
+        {/* 👇 evita que el navegador bloquee el submit */}
+        <Form onSubmit={handleLogin} noValidate>
           <Form.Group className="mb-3">
             <Form.Label htmlFor="inputEmail">Email</Form.Label>
             <Form.Control
@@ -55,6 +60,7 @@ function LoginPages() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={loading}
             />
           </Form.Group>
 
@@ -67,12 +73,13 @@ function LoginPages() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={loading}
             />
           </Form.Group>
 
           <div className="botones">
-            <Button className="btn-login" type="submit">
-              Iniciar Sesión
+            <Button className="btn-login" type="submit" disabled={loading}>
+              {loading ? 'Entrando...' : 'Iniciar Sesión'}
             </Button>
           </div>
 
@@ -81,11 +88,10 @@ function LoginPages() {
               ¿No tienes una cuenta? <Link to="/registro">¡Regístrate!</Link>
             </p>
           </div>
-
         </Form>
       </div>
     </Container>
-  )
+  );
 }
 
-export default LoginPages
+export default LoginPages;
