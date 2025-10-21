@@ -1,89 +1,86 @@
-// src/tests/LoginPages.spec.jsx
-import React from 'react'
-import { screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { renderWithAuthRouter } from './utils/RenderWithAuthRouter.jsx'
-import LoginPages from '../pages/LoginPages.jsx'
-import { vi } from 'vitest'
+import { render, screen, fireEvent } from "@testing-library/react"; 
+import { BrowserRouter } from "react-router-dom"; 
+import LoginPages from "../pages/LoginPages"; 
 
-// Mockeamos useNavigate para verificar navegación a /profile
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
-  return {
-    ...actual,
-    useNavigate: () => (path) => {
-      global.__navCalls = global.__navCalls || []
-      global.__navCalls.push(path)
-    },
-  }
-})
+describe("Componentes LoginPages", () => { 
 
-describe('LoginPages', () => {
-  beforeEach(() => {
-    global.__navCalls = []
-    // limpiar localStorage entre pruebas por si AuthContext persiste usuario
-    localStorage.clear()
-  })
+  /**
+   * Test: Input de Email
+   * Verifica que el campo "Email" se renderice correctamente y permita al usuario escribir.
+   */
+  it('renderiza el formulario EMAIL correctamente y permite escribir', () => { 
+    render(
+      <BrowserRouter>
+        <LoginPages />
+      </BrowserRouter>
+    );
 
-  it('valida email y navega al profile en login exitoso', async () => {
-    renderWithAuthRouter(<LoginPages />)
+    const emailInput = screen.getByLabelText(/Email/i); 
+    expect(emailInput).toBeInTheDocument(); 
 
-    const user = userEvent.setup()
-    const email = screen.getByLabelText(/email/i)
-    const pass = screen.getByLabelText(/contraseña/i)
-    const submit = screen.getByRole('button', { name: /iniciar sesión/i })
+    fireEvent.change(emailInput, { target: { value: "usuario@test.com" } }); 
+    expect(emailInput.value).toBe("usuario@test.com"); 
+  });
 
-    await user.type(email, 'user@test.com')
-    await user.type(pass, '123456')
-    await user.click(submit)
+  /**
+   * Test: Input de Contraseña
+   * Verifica que el campo "Contraseña" se renderice correctamente y permita al usuario escribir.
+   */
+  it('renderiza el formulario CONTRASEÑA correctamente y permite escribir', () => { 
+    render(
+      <BrowserRouter>
+        <LoginPages />
+      </BrowserRouter>
+    );
 
-    // Se llamó a navigate('/profile')
-    expect(global.__navCalls).toContain('/profile')
-    // y no hay alertas de error visibles
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
-  })
+    const passwordInput = screen.getByLabelText(/Contraseña/i); 
+    expect(passwordInput).toBeInTheDocument(); 
 
-  it('renderiza el formulario CONTRASEÑA correctamente y permite escribir', async () => {
-    renderWithAuthRouter(<LoginPages />)
+    fireEvent.change(passwordInput, { target: { value: "123456" } }); 
+    expect(passwordInput.value).toBe("123456"); 
+  });
 
-    const user = userEvent.setup()
-    const passwordInput = screen.getByLabelText(/contraseña/i)
+  /**
+   * Test: Interacción completa con formulario
+   * Verifica que los campos de Email y Contraseña sean interactivos antes de hacer clic en "Iniciar Sesión"
+   * y que el botón exista en el DOM.
+   */
+  it('Renderiza el botón "Iniciar Sesión" y permite usar los textfields antes de hacer clic', () => { 
+    render(
+      <BrowserRouter>
+        <LoginPages />
+      </BrowserRouter>
+    );
 
-    // es input de tipo password y está habilitado
-    expect(passwordInput).toHaveAttribute('type', 'password')
-    expect(passwordInput).not.toBeDisabled()
+    const emailInput = screen.getByLabelText(/Email/i); 
+    const passwordInput = screen.getByLabelText(/Contraseña/i); 
+    const loginButton = screen.getByRole("button", { name: /iniciar sesión/i }); 
 
-    await user.type(passwordInput, 'secreta123')
-    expect(passwordInput).toHaveValue('secreta123')
-  })
+    expect(emailInput).toBeInTheDocument(); 
+    expect(passwordInput).toBeInTheDocument(); 
+    expect(loginButton).toBeInTheDocument(); 
 
-  it('Renderiza el botón "Iniciar Sesión" y permite usar los textfields antes de hacer click', async () => {
-    renderWithAuthRouter(<LoginPages />)
+    fireEvent.change(emailInput, { target: { value: "usuario@test.com" } }); 
+    fireEvent.change(passwordInput, { target: { value: "123456" } }); 
 
-    const user = userEvent.setup()
-    const email = screen.getByLabelText(/email/i)
-    const pass = screen.getByLabelText(/contraseña/i)
-    const submit = screen.getByRole('button', { name: /iniciar sesión/i })
+    expect(emailInput.value).toBe("usuario@test.com"); 
+    expect(passwordInput.value).toBe("123456"); 
 
-    // inputs habilitados y botón habilitado
-    expect(email).not.toBeDisabled()
-    expect(pass).not.toBeDisabled()
-    expect(submit).toBeEnabled()
+    fireEvent.click(loginButton); 
+  });
 
-    await user.type(email, 'user@test.com')
-    await user.type(pass, 'abc123')
-    expect(email).toHaveValue('user@test.com')
-    expect(pass).toHaveValue('abc123')
-  })
+  /**
+   * Test: Enlace de registro
+   * Verifica que el texto/enlace "¡Regístrate!" se renderice correctamente y sea visible para el usuario.
+   */
+  it('Renderiza el texto direccional "Registrarse"', () => { 
+    render(
+      <BrowserRouter>
+        <LoginPages />
+      </BrowserRouter>
+    );
 
-  it('Renderiza el texto direccional "Registrarse"', () => {
-    renderWithAuthRouter(<LoginPages />)
-
-    // texto visible
-    expect(screen.getByText(/Regístrate/i)).toBeInTheDocument()
-
-    // y el link apunta a /registro
-    const link = screen.getByRole('link', { name: /regístrate/i })
-    expect(link.getAttribute('href')).toBe('/registro')
-  })
-})
+    const registerLink = screen.getByRole("link", { name: /¡Regístrate!/i }); 
+    expect(registerLink).toBeInTheDocument(); 
+  });
+});

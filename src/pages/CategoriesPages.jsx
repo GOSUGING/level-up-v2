@@ -12,18 +12,16 @@ const CategoriesPages = () => {
   return (
     <div style={{ padding: "2rem", textAlign: "center" }}>
       <h1>Categorías</h1>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: "1rem",
-          marginTop: "2rem",
-        }}
-      >
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+        gap: "1rem",
+        marginTop: "2rem"
+      }}>
         {categorias.map((cat) => (
           <Link
             key={cat.id}
-            to={`/productos#${cat.id}`}
+            to={`/products#${cat.id}`}
             style={{
               display: "block",
               background: "#222",

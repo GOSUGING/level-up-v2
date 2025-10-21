@@ -59,7 +59,7 @@ function LoginPages() {
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label htmlFor="inputPassword">Password</Form.Label>
+            <Form.Label htmlFor="inputPassword">Contraseña</Form.Label>
             <Form.Control
               type="password"
               id="inputPassword"
@@ -71,11 +71,6 @@ function LoginPages() {
           </Form.Group>
 
           <div className="botones">
-            <Link to="/registro">
-              <Button className="btn-register" type="button">
-                Registrarse
-              </Button>
-            </Link>
             <Button className="btn-login" type="submit">
               Iniciar Sesión
             </Button>
@@ -86,6 +81,7 @@ function LoginPages() {
               ¿No tienes una cuenta? <Link to="/registro">¡Regístrate!</Link>
             </p>
           </div>
+
         </Form>
       </div>
     </Container>
