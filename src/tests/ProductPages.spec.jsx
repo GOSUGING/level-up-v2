@@ -4,59 +4,49 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { vi } from 'vitest'
-import ProductPages from '../src/pages/ProductPages'
+import { CartContext } from '../context/CartContext.jsx'
+import ProductsPages from '../pages/ProductsPages.jsx'
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
-  return {
-    ...actual,
-    useNavigate: () => (path) => {
-      global.__vNavigateCalls = global.__vNavigateCalls || []
-      global.__vNavigateCalls.push(path)
-    },
-  }
-})
-
-describe('Pruebas de ProductPages', () => {
-  beforeEach(() => {
-    global.__vNavigateCalls = []
-  })
-
-  it('Debe renderizar el título principal de productos', () => {
+describe('Pruebas de ProductsPages', () => {
+  it('Renderiza el título principal de la tienda', () => {
     render(
       <MemoryRouter>
-        <ProductPages />
+        <CartContext.Provider value={{ addToCart: () => {} }}>
+          <ProductsPages />
+        </CartContext.Provider>
       </MemoryRouter>
     )
 
-    // Busca el título o texto principal del componente
-    expect(screen.getByText(/Productos/i)).toBeInTheDocument()
+    expect(screen.getByText(/Tienda Level-Up!/i)).toBeInTheDocument()
   })
 
-  it('Debe mostrar al menos un producto en pantalla', async () => {
+  it('Muestra al menos un producto en pantalla', async () => {
     render(
       <MemoryRouter>
-        <ProductPages />
+        <CartContext.Provider value={{ addToCart: () => {} }}>
+          <ProductsPages />
+        </CartContext.Provider>
       </MemoryRouter>
     )
 
-    // Busca un producto visible (ajusta el texto si tu lista tiene otro formato)
-    const producto = await screen.findByText(/Producto/i)
+    const producto = await screen.findByText(/Catán/i)
     expect(producto).toBeInTheDocument()
   })
 
-  it('Debe navegar al detalle del producto al hacer clic en "Ver más"', async () => {
+  it('Llama a addToCart al presionar "Agregar al Carrito"', async () => {
+    const addSpy = vi.fn()
+
     render(
       <MemoryRouter>
-        <ProductPages />
+        <CartContext.Provider value={{ addToCart: addSpy }}>
+          <ProductsPages />
+        </CartContext.Provider>
       </MemoryRouter>
     )
 
-    // Simula el click en un botón o enlace "Ver más"
-    const verMasBtn = await screen.findByRole('button', { name: /ver más/i })
-    await userEvent.click(verMasBtn)
+    const addBtns = await screen.findAllByRole('button', { name: /Agregar al Carrito/i })
+    await userEvent.click(addBtns[0])
 
-    // Verifica que la navegación fue llamada
-    expect(global.__vNavigateCalls.some((path) => path.includes('/producto'))).toBe(true)
+    expect(addSpy).toHaveBeenCalledTimes(1)
   })
 })

@@ -13,25 +13,34 @@ function HeaderComponent() {
   const totalPrice = cartItems.reduce((sum, item) => sum + (item.price || 0), 0);
 
   return (
-    <Navbar collapseOnSelect expand="lg" className='custom' variant="dark" sticky="top">
+    <Navbar collapseOnSelect expand="lg" className="custom" variant="dark" sticky="top">
       <Container>
+        {/* Logo */}
         <Navbar.Brand as={Link} to="/">Level-up!</Navbar.Brand>
+
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ms-auto align-items-center">
+
+            
+            <Nav.Link as={Link} to="/categorias">Categorías</Nav.Link>
             <Nav.Link as={Link} to="/productos">Productos</Nav.Link>
             <Nav.Link as={Link} to="/registro">Registrarse</Nav.Link>
             <Nav.Link as={Link} to="/login">Iniciar Sesión</Nav.Link>
 
-            {/* Carrito como icono */}
+            {/* Carrito */}
             <Dropdown show={showCart} onToggle={() => setShowCart(!showCart)} align="end">
               <Dropdown.Toggle
                 as={Button}
                 variant="dark"
-                aria-label="shopping cart" // ✅ Esto permite que Testing Library encuentre el botón
+                aria-label="shopping cart"
               >
                 <FaShoppingCart size={20} />
-                {totalItems > 0 && <Badge bg="light" text="dark" className="ms-1">{totalItems}</Badge>}
+                {totalItems > 0 && (
+                  <Badge bg="light" text="dark" className="ms-1">
+                    {totalItems}
+                  </Badge>
+                )}
               </Dropdown.Toggle>
 
               <Dropdown.Menu style={{ minWidth: '300px', right: 0 }}>
@@ -40,7 +49,10 @@ function HeaderComponent() {
                 ) : (
                   <>
                     {cartItems.map((item, index) => (
-                      <Dropdown.Item key={index} className="d-flex justify-content-between align-items-center">
+                      <Dropdown.Item
+                        key={index}
+                        className="d-flex justify-content-between align-items-center"
+                      >
                         <span>{item.name}</span>
                         <span>${item.price.toLocaleString()}</span>
                         <Button
