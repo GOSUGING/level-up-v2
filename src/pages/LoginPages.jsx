@@ -86,7 +86,6 @@ function LoginPages() {
               ¿No tienes una cuenta? <Link to="/registro">¡Regístrate!</Link>
             </p>
           </div>
-
         </Form>
       </div>
     </Container>
