@@ -9,6 +9,7 @@ import RegisterPages from './pages/RegisterPages';
 import LoginPages from './pages/LoginPages';
 import Footer from './components/Footer';
 import CategoriesPages from './pages/CategoriesPages';
+import PurchasePages from './pages/PurchasePages';
 import PerfilPages from './pages/ProfilePages';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/registro" element={<RegisterPages />} />
             <Route path="/login" element={<LoginPages />} />
             <Route path="/categorias" element={<CategoriesPages />} />
+            <Route path="/purchase" element={<PurchasePages />} />
             <Route
               path="/perfil"
               element={
