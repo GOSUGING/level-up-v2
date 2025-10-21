@@ -75,7 +75,7 @@ function HeaderComponent() {
                         className="w-100"
                         onClick={() => {
                           setShowCart(false);
-                          navigate('/pago'); // 👈 redirige a la página de pago
+                          navigate('/purchase'); // 👈 redirige a la página de pago
                         }}
                       >
                         Ir a pagar 💳

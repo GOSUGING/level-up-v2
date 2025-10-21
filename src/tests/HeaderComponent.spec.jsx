@@ -93,7 +93,7 @@ describe('Pruebas de HeaderComponent', () => {
     const payBtn = await screen.findByRole('button', { name: /Ir a pagar/i })
     await userEvent.click(payBtn)
 
-    // Verificamos que navigate('/pago') fue llamado
-    expect(global.__vNavigateCalls).toContain('/pago')
+    // Verificamos que navigate('/purchase') fue llamado
+    expect(global.__vNavigateCalls).toContain('/purchase')
   })
 })
