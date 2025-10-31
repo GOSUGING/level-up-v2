@@ -1,61 +1,103 @@
-import React, { createContext, useEffect, useState } from 'react';
+
+import React, { createContext, useEffect, useMemo, useState } from "react";
 
 export const AuthContext = createContext();
 
-/**
- * AuthProvider envuelve la app y provee:
- * - user: objeto { id, name, email, preferences, ... }
- * - login(credentials): simula login y almacena user
- * - logout(): cierra sesión
- * - updateProfile(updates): actualiza perfil local y en storage
- */
+// Lee la URL del backend desde variables de entorno de Vite
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+
+// Helper para fetch con JSON
+async function http(path, { method = "GET", body, token } = {}) {
+  const res = await fetch(`${API_URL}${path}`, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    credentials: "omit",
+  });
+  const text = await res.text();
+  let data;
+  try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+  if (!res.ok) {
+    const msg = (data && (data.message || data.error)) || `HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+  return data;
+}
+
+const STORAGE_KEY = "levelup:user";
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Carga usuario desde localStorage al iniciar la app
+  // Cargar usuario al iniciar
   useEffect(() => {
-    const stored = localStorage.getItem('auth_user');
-    if (stored) setUser(JSON.parse(stored));
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) setUser(JSON.parse(raw));
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const persist = (u) => {
     setUser(u);
-    if (u) localStorage.setItem('auth_user', JSON.stringify(u));
-    else localStorage.removeItem('auth_user');
+    if (u) localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
+    else localStorage.removeItem(STORAGE_KEY);
   };
 
+  // Login contra /api/auth/login
   const login = async ({ email, password }) => {
-    // Aquí va llamada real a backend. Por ahora simulamos:
-    // aceptar cualquier email/password no vacío
-    if (!email || !password) throw new Error('Credenciales inválidas');
-    const fakeUser = {
-      id: Date.now(),
-      name: 'Nombre Usuario',
-      email,
-      address: '',
-      phone: '',
-      preferences: {
-        newsletter: true,
-        promos: false,
-      },
-    };
-    persist(fakeUser);
-    return fakeUser;
+    const data = await http("/api/auth/login", {
+      method: "POST",
+      body: { email, password },
+    });
+    // data viene con {id, name, email, address, phone, preferences{newsletter, promos} }
+    persist(data);
+    return data;
   };
 
-  const logout = () => {
-    persist(null);
+  // Registro contra /api/auth/register
+  const register = async ({ name, email, password }) => {
+    const data = await http("/api/auth/register", {
+      method: "POST",
+      body: { name, email, password },
+    });
+    // Opcional: loguear automáticamente después de registrar
+    persist(data);
+    return data;
   };
 
-  const updateProfile = (updates) => {
-    const updated = { ...user, ...updates };
-    persist(updated);
-    return updated;
+  // Actualizar perfil contra /api/users/{id}
+  const updateProfile = async (updates) => {
+    if (!user?.id) throw new Error("No hay usuario en sesión");
+    const data = await http(`/api/users/${user.id}`, {
+      method: "PUT",
+      body: updates,
+    });
+    persist(data);
+    return data;
   };
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, updateProfile }}>
-      {children}
-    </AuthContext.Provider>
+  const logout = () => persist(null);
+
+  const value = useMemo(
+    () => ({
+      user,
+      loading,
+      login,
+      register,
+      logout,
+      updateProfile,
+      apiUrl: API_URL,
+    }),
+    [user, loading]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export default AuthContext;
