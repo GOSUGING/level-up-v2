@@ -34,6 +34,18 @@ export default function ProductDetailPage() {
   const product = serverProduct || localProduct;
   const stock = serverProduct?.stock ?? 0;
 
+  // Lista de características: prioriza las locales si el backend no las trae
+  const featuresList = useMemo(() => {
+    const f = serverProduct?.features ?? localProduct?.features;
+    if (!f) return [];
+    if (Array.isArray(f)) return f;
+    if (typeof f === 'string') {
+      const parts = f.split(/[•|,;\n]/).map(s => s.trim()).filter(Boolean);
+      return parts.length ? parts : [f];
+    }
+    return [];
+  }, [serverProduct, localProduct]);
+
   if (!localProduct && !serverProduct && !loading) {
     return (
       <Container className="mt-4 text-center">
@@ -81,12 +93,18 @@ export default function ProductDetailPage() {
               <p className="mt-2" style={{color:'red'}}>No puedes agregar al carrito: sin stock.</p>
             )}
 
-            {/* Características del producto - placeholder basadas en descripción */}
+            {/* Características del producto (independientes de la descripción) */}
             <div className="mt-4">
               <h5>Características</h5>
-              <ul>
-                <li>{product.description}</li>
-              </ul>
+              {featuresList.length > 0 ? (
+                <ul>
+                  {featuresList.map((feat, idx) => (
+                    <li key={idx}>{feat}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted">Aún no hay características específicas para este producto.</p>
+              )}
             </div>
           </Col>
         </Row>
