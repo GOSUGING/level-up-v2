@@ -6,7 +6,10 @@ import { PRODUCTS as products } from '../data/products';
 
 const CATEGORIES = ['consolas', 'juegos', 'accesorios', 'ropa'];
 
-function ProductsPages() {
+const CATEGORIES = ["consolas", "juegos", "accesorios", "ropa"];
+const PLACEHOLDER = "/assets/img/placeholder.png"; // opcional
+
+export default function ProductsPages() {
   const { addToCart } = useContext(CartContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -67,5 +70,3 @@ function ProductsPages() {
     </Container>
   );
 }
-
-export default ProductsPages;

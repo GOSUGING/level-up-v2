@@ -1,86 +1,98 @@
-import { render, screen, fireEvent } from "@testing-library/react"; 
-import { BrowserRouter } from "react-router-dom"; 
-import LoginPages from "../pages/LoginPages"; 
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
+import LoginPages from '../pages/LoginPages.jsx';
+import { AuthContext } from '../context/AuthContext.jsx';
 
-describe("Componentes LoginPages", () => { 
+// Mock de useNavigate
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => (path) => {
+      global.__navCalls = global.__navCalls || [];
+      global.__navCalls.push(path);
+    },
+  };
+});
 
-  /**
-   * Test: Input de Email
-   * Verifica que el campo "Email" se renderice correctamente y permita al usuario escribir.
-   */
-  it('renderiza el formulario EMAIL correctamente y permite escribir', () => { 
-    render(
-      <BrowserRouter>
-        <LoginPages />
-      </BrowserRouter>
-    );
+// Render helper con AuthContext mockeado
+const renderWithAuth = (ui, { authValue, initialEntries = ['/login'] } = {}) =>
+  render(
+    <AuthContext.Provider value={authValue}>
+      <MemoryRouter initialEntries={initialEntries}>{ui}</MemoryRouter>
+    </AuthContext.Provider>
+  );
 
-    const emailInput = screen.getByLabelText(/Email/i); 
-    expect(emailInput).toBeInTheDocument(); 
-
-    fireEvent.change(emailInput, { target: { value: "usuario@test.com" } }); 
-    expect(emailInput.value).toBe("usuario@test.com"); 
+describe('LoginPages', () => {
+  beforeEach(() => {
+    global.__navCalls = [];
   });
 
-  /**
-   * Test: Input de Contraseña
-   * Verifica que el campo "Contraseña" se renderice correctamente y permita al usuario escribir.
-   */
-  it('renderiza el formulario CONTRASEÑA correctamente y permite escribir', () => { 
-    render(
-      <BrowserRouter>
-        <LoginPages />
-      </BrowserRouter>
-    );
+  it('permite escribir en el input de Email', async () => {
+    const user = userEvent.setup();
+    const loginMock = vi.fn();
 
-    const passwordInput = screen.getByLabelText(/Contraseña/i); 
-    expect(passwordInput).toBeInTheDocument(); 
+    renderWithAuth(<LoginPages />, { authValue: { user: null, login: loginMock } });
 
-    fireEvent.change(passwordInput, { target: { value: "123456" } }); 
-    expect(passwordInput.value).toBe("123456"); 
+    const email = screen.getByLabelText(/email/i);
+    await user.type(email, 'usuario@test.com');
+    expect(email).toHaveValue('usuario@test.com');
   });
 
-  /**
-   * Test: Interacción completa con formulario
-   * Verifica que los campos de Email y Contraseña sean interactivos antes de hacer clic en "Iniciar Sesión"
-   * y que el botón exista en el DOM.
-   */
-  it('Renderiza el botón "Iniciar Sesión" y permite usar los textfields antes de hacer clic', () => { 
-    render(
-      <BrowserRouter>
-        <LoginPages />
-      </BrowserRouter>
-    );
+  it('permite escribir en el input de Contraseña', async () => {
+    const user = userEvent.setup();
+    const loginMock = vi.fn();
 
-    const emailInput = screen.getByLabelText(/Email/i); 
-    const passwordInput = screen.getByLabelText(/Contraseña/i); 
-    const loginButton = screen.getByRole("button", { name: /iniciar sesión/i }); 
+    renderWithAuth(<LoginPages />, { authValue: { user: null, login: loginMock } });
 
-    expect(emailInput).toBeInTheDocument(); 
-    expect(passwordInput).toBeInTheDocument(); 
-    expect(loginButton).toBeInTheDocument(); 
-
-    fireEvent.change(emailInput, { target: { value: "usuario@test.com" } }); 
-    fireEvent.change(passwordInput, { target: { value: "123456" } }); 
-
-    expect(emailInput.value).toBe("usuario@test.com"); 
-    expect(passwordInput.value).toBe("123456"); 
-
-    fireEvent.click(loginButton); 
+    const pass = screen.getByLabelText(/contraseña|password/i);
+    await user.type(pass, '123456');
+    expect(pass).toHaveValue('123456');
   });
 
-  /**
-   * Test: Enlace de registro
-   * Verifica que el texto/enlace "¡Regístrate!" se renderice correctamente y sea visible para el usuario.
-   */
-  it('Renderiza el texto direccional "Registrarse"', () => { 
-    render(
-      <BrowserRouter>
-        <LoginPages />
-      </BrowserRouter>
-    );
+  it('llama a login y navega a /perfil en login exitoso', async () => {
+    const user = userEvent.setup();
+    const loginMock = vi.fn().mockResolvedValue(true);
 
-    const registerLink = screen.getByRole("link", { name: /¡Regístrate!/i }); 
-    expect(registerLink).toBeInTheDocument(); 
+    renderWithAuth(<LoginPages />, { authValue: { user: null, login: loginMock } });
+
+    await user.type(screen.getByLabelText(/email/i), 'user@test.com');
+    await user.type(screen.getByLabelText(/contraseña|password/i), 'abc123');
+    await user.click(screen.getByRole('button', { name: /iniciar sesión/i }));
+
+    expect(loginMock).toHaveBeenCalledWith({ email: 'user@test.com', password: 'abc123' });
+    expect(global.__navCalls).toContain('/perfil');
+  });
+
+  it('muestra error si el email es inválido y NO llama a login', async () => {
+    const user = userEvent.setup();
+    const loginMock = vi.fn();
+
+    renderWithAuth(<LoginPages />, { authValue: { user: null, login: loginMock } });
+
+    await user.type(screen.getByLabelText(/email/i), 'a@b');
+    await user.type(screen.getByLabelText(/contraseña|password/i), '123456');
+    await user.click(screen.getByRole('button', { name: /iniciar sesión/i }));
+
+    await screen.findByText(/Por favor ingrese un correo electrónico válido/i);
+    expect(loginMock).not.toHaveBeenCalled();
+  });
+
+  it('redirige automáticamente a /perfil si ya hay usuario', () => {
+    renderWithAuth(<LoginPages />, {
+      authValue: { user: { email: 'logueado@ok.com' }, login: vi.fn() },
+    });
+    expect(global.__navCalls).toContain('/perfil');
+  });
+
+  it('renderiza el link "¡Regístrate!" con href /registro', () => {
+    renderWithAuth(<LoginPages />, { authValue: { user: null, login: vi.fn() } });
+
+    const link = screen.getByRole('link', { name: /¡Regístrate!/i });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', '/registro');
   });
 });

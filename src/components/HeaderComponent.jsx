@@ -1,45 +1,92 @@
-import React, { useContext, useState } from 'react';
-import { Navbar, Nav, Container, Badge, Dropdown, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { CartContext } from '../context/CartContext';
-import { FaShoppingCart } from 'react-icons/fa';
+// src/components/HeaderComponent.jsx
+import React, { useState } from "react";
+import { Navbar, Nav, Container, Badge, Dropdown, Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { FaShoppingCart } from "react-icons/fa";
+import { useCart } from "../context/CartContext";
 
-function HeaderComponent() {
-  const { cartItems, removeFromCart } = useContext(CartContext);
+export default function HeaderComponent() {
+  const { cartItems, cartItemsCount, removeFromCart, cartSubtotal } = useCart();
   const [showCart, setShowCart] = useState(false);
-
-  const totalItems = cartItems.length;
+  const navigate = useNavigate();
 
   return (
-    <Navbar collapseOnSelect expand="lg" className='custom' variant="dark" sticky="top">
+    <Navbar collapseOnSelect expand="lg" className="navbar-custom" variant="dark" sticky="top">
       <Container>
-        <Navbar.Brand as={Link} to="/">Level-up!</Navbar.Brand>
+        {/* Logo */}
+        <Navbar.Brand as={Link} to="/">Level-Up</Navbar.Brand>
+
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ms-auto align-items-center">
+            <Nav.Link as={Link} to="/categorias">Categorías</Nav.Link>
             <Nav.Link as={Link} to="/productos">Productos</Nav.Link>
             <Nav.Link as={Link} to="/registro">Registrarse</Nav.Link>
             <Nav.Link as={Link} to="/login">Iniciar Sesión</Nav.Link>
-            <Nav.Link as={Link} to="/pago">Pagar</Nav.Link>
 
-            {/* Carrito como icono */}
-            <Dropdown show={showCart} onToggle={() => setShowCart(!showCart)} align="end">
-              <Dropdown.Toggle as={Button} variant="dark">
+            {/* Carrito */}
+            <Dropdown show={showCart} onToggle={setShowCart} align="end">
+              <Dropdown.Toggle as={Button} variant="dark" aria-label="shopping cart">
                 <FaShoppingCart size={20} />
-                {totalItems > 0 && <Badge bg="light" text="dark" className="ms-1">{totalItems}</Badge>}
+                {cartItemsCount > 0 && (
+                  <Badge bg="light" text="dark" className="ms-1">
+                    {cartItemsCount}
+                  </Badge>
+                )}
               </Dropdown.Toggle>
 
-              <Dropdown.Menu style={{ minWidth: '300px', right: 0 }}>
+              <Dropdown.Menu style={{ minWidth: 320 }}>
                 {cartItems.length === 0 ? (
                   <Dropdown.Item disabled>Carrito vacío</Dropdown.Item>
                 ) : (
-                  cartItems.map((item, index) => (
-                    <Dropdown.Item key={index} className="d-flex justify-content-between align-items-center">
-                      <span>{item.name}</span>
-                      <span>${item.price.toLocaleString()}</span>
-                      <Button size="sm" variant="danger" onClick={() => removeFromCart(item.id)}>X</Button>
-                    </Dropdown.Item>
-                  ))
+                  <>
+                    {cartItems.map((item) => (
+                      <Dropdown.Item
+                        key={item.id}
+                        className="d-flex align-items-center justify-content-between"
+                      >
+                        <div className="me-2" style={{ flex: 1 }}>
+                          <div className="fw-semibold">{item.name}</div>
+                          <small className="text-muted">
+                            {item.qty || 1} × ${Number(item.price || 0).toLocaleString("es-CL")}
+                          </small>
+                        </div>
+                        <div className="d-flex align-items-center gap-2">
+                          <span className="fw-bold">
+                            ${(Number(item.price || 0) * (item.qty || 1)).toLocaleString("es-CL")}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              removeFromCart(item.id);
+                            }}
+                          >
+                            ×
+                          </Button>
+                        </div>
+                      </Dropdown.Item>
+                    ))}
+
+                    <Dropdown.Divider />
+                    <div className="d-flex justify-content-between align-items-center px-3">
+                      <strong>Total:</strong>
+                      <strong>${cartSubtotal.toLocaleString("es-CL")}</strong>
+                    </div>
+                    <div className="px-3 mt-2 mb-2">
+                      <Button
+                        variant="success"
+                        className="w-100"
+                        onClick={() => {
+                          setShowCart(false);
+                          navigate("/purchase");
+                        }}
+                      >
+                        Ir a pagar 💳
+                      </Button>
+                    </div>
+                  </>
                 )}
               </Dropdown.Menu>
             </Dropdown>
@@ -49,5 +96,3 @@ function HeaderComponent() {
     </Navbar>
   );
 }
-
-export default HeaderComponent;
