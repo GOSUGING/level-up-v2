@@ -12,16 +12,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Footer from './components/Footer';
 
-import HeaderComponent from "./components/HeaderComponent";
-import HomePages from "./pages/HomePages";
-import ProductsPages from "./pages/ProductsPages";
-import RegisterPages from "./pages/RegisterPages";
-import LoginPages from "./pages/LoginPages";
-import Footer from "./components/Footer";
-import CategoriesPages from "./pages/CategoriesPages";
-import PurchasePages from "./pages/PurchasePages";
-import PerfilPages from "./pages/ProfilePages";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";

@@ -4,8 +4,6 @@ import { CartContext } from '../context/CartContext';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { PRODUCTS as products } from '../data/products';
 
-const CATEGORIES = ['consolas', 'juegos', 'accesorios', 'ropa'];
-
 const CATEGORIES = ["consolas", "juegos", "accesorios", "ropa"];
 const PLACEHOLDER = "/assets/img/placeholder.png"; // opcional
 
